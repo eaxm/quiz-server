@@ -20,7 +20,7 @@ public class Main {
 
         Spark.get("/version", new VersionRoute(VERSION));
         Spark.post("/login", new LoginRoute());
-        // Spark.post("/register", null); // TODO
+        Spark.post("/register", new RegisterRoute());
 
 
         Spark.path("/app", () -> {

@@ -14,17 +14,22 @@ import javax.naming.AuthenticationException;
  * Handles login attempt of a user
  */
 public class LoginRoute implements Route {
+
+    private UserService userService;
+
+    public LoginRoute(){
+        userService = new UserService();
+    }
+
     @Override
     public Object handle(Request request, Response response) throws Exception {
 
         String body = request.body();
         Gson gson = new Gson();
         AuthInfo authInfo = gson.fromJson(body, AuthInfo.class);
-        UserService userService = new UserService();
 
         try {
             if (!userService.exists(authInfo.getUsername())) {
-                // userService.createUser(authInfo); // TODO: Move to register route
                 response.status(401);
                 return "Invalid credentials";
             }
