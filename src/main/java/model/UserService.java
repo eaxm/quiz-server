@@ -11,6 +11,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.sql.*;
 import java.util.Base64;
 import java.util.Date;
+import java.util.UUID;
 
 
 /**
@@ -52,7 +53,7 @@ public class UserService {
      * @throws InvalidKeySpecException
      * @throws NoSuchAlgorithmException
      */
-    public Session auth(AuthInfo authInfo) throws SQLException, AuthenticationException, InvalidKeySpecException, NoSuchAlgorithmException {
+    public Session auth(AuthInfo authInfo, String ipAddr) throws SQLException, AuthenticationException, InvalidKeySpecException, NoSuchAlgorithmException {
         DBConnection dbc = DBConnection.getInstance();
         Connection conn = DriverManager.getConnection(dbc.getURL(), dbc.getProperties());
         String authQuery = "SELECT * FROM account WHERE username = ?;";
@@ -71,7 +72,18 @@ public class UserService {
             String inputPasswordHashed = new String(HashTool.hashPassword(authInfo.getPassword(), saltBytes));
 
             if (hashedPassword.equals(inputPasswordHashed)) {
-                Session session = new Session("test-session"); // TODO: Create session
+                String sessionText = UUID.randomUUID().toString() + UUID.randomUUID().toString();
+
+                String sessionInsert = "INSERT INTO user_session (session_text, session_date, ip_address, user_id) VALUES (?, ?, ?, ?)";
+                PreparedStatement psInsert = conn.prepareStatement(sessionInsert);
+                psInsert.setString(1, sessionText);
+                psInsert.setTimestamp(2, new Timestamp(new Date().getTime()));
+                psInsert.setString(3, ipAddr);
+                long userId = rs.getLong("user_id");
+                psInsert.setLong(4, userId);
+                psInsert.executeUpdate();
+
+                Session session = new Session(sessionText);
                 conn.close();
                 return session;
             }

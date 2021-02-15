@@ -34,7 +34,7 @@ public class LoginRoute implements Route {
                 return "Invalid credentials";
             }
 
-            Session session = userService.auth(authInfo);
+            Session session = userService.auth(authInfo, request.ip());
             String jsonResponse = gson.toJson(session);
             return jsonResponse;
         } catch (AuthenticationException e) {
