@@ -6,6 +6,14 @@ CREATE TABLE IF NOT EXISTS account (
     salt TEXT
 );
 
+CREATE TABLE IF NOT EXISTS user_session (
+    session_id SERIAL PRIMARY KEY,
+    session_text TEXT UNIQUE,
+    session_date TIMESTAMP,
+    ip_address TEXT,
+    user_id INTEGER REFERENCES account (user_id)
+);
+
 CREATE TABLE IF NOT EXISTS quiz (
     quiz_id SERIAL PRIMARY KEY,
     quiz_name TEXT,
