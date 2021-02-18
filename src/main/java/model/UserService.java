@@ -120,4 +120,48 @@ public class UserService {
         ps.executeUpdate();
         conn.close();
     }
+
+    public long getUserIdBySession(String sessionText) throws SQLException {
+        DBConnection dbc = DBConnection.getInstance();
+        Connection conn = DriverManager.getConnection(dbc.getURL(), dbc.getProperties());
+
+        PreparedStatement ps = conn.prepareStatement("SELECT user_id FROM user_session WHERE session_text = ?");
+        ps.setString(1, sessionText);
+        ResultSet rs = ps.executeQuery();
+        conn.close();
+        if(rs.next()){
+            return rs.getLong("user_id");
+        }
+
+        throw new SQLDataException("No session found");
+    }
+
+    public String getUsernameByUserId(long userId) throws SQLException {
+        DBConnection dbc = DBConnection.getInstance();
+        Connection conn = DriverManager.getConnection(dbc.getURL(), dbc.getProperties());
+
+        PreparedStatement ps = conn.prepareStatement("SELECT username FROM account WHERE user_id = ?");
+        ps.setLong(1, userId);
+        ResultSet rs = ps.executeQuery();
+        conn.close();
+        if(rs.next()){
+            return rs.getString("username");
+        }
+
+        throw new SQLDataException("Invalid user id");
+    }
+
+    public Timestamp getRegisterDateByUserId(long userId) throws SQLException {
+        DBConnection dbc = DBConnection.getInstance();
+        Connection conn = DriverManager.getConnection(dbc.getURL(), dbc.getProperties());
+
+        PreparedStatement ps = conn.prepareStatement("SELECT register_date FROM account WHERE user_id = ?");
+        ps.setLong(1, userId);
+        ResultSet rs = ps.executeQuery();
+        conn.close();
+        if(rs.next()){
+            return rs.getTimestamp("register_date");
+        }
+        throw new SQLDataException("Invalid user id");
+    }
 }

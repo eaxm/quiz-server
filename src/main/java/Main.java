@@ -1,7 +1,5 @@
-import route.LoginRoute;
-import route.RegisterRoute;
-import route.QuizListRoute;
-import route.VersionRoute;
+import filter.SessionFilter;
+import route.*;
 import spark.Spark;
 
 /**
@@ -25,8 +23,9 @@ public class Main {
 
         Spark.path("/app", () -> {
             // TODO: session filter
-
+            Spark.before("/*", new SessionFilter());
             Spark.get("/list", new QuizListRoute());
+            Spark.get("/info", new AccountInfoRoute());
         });
 
         System.out.printf("Quiz server version %s listening on port %d%n", VERSION, PORT);
