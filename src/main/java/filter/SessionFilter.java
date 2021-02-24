@@ -8,6 +8,9 @@ import spark.Spark;
 
 import java.sql.SQLDataException;
 
+/**
+ * Checks if session sent by an user is valid
+ */
 public class SessionFilter implements Filter {
 
     private UserService userService;
@@ -24,17 +27,21 @@ public class SessionFilter implements Filter {
             System.out.println("Session: " + session);
             try {
                 // TODO: Check for expiration
-                long userId = userService.getUserIdBySession(session);
-                System.out.printf("userId %d made a %s request at %s%n", userId, request.requestMethod(), request.pathInfo()); // Temporary logging
+                if (userService.isUserSessionValid(session, request.ip())) {
+                    // Temporary logging
+                    long userId = userService.getUserIdBySession(session);
+                    System.out.printf("userId %d made a %s request at %s%n", userId, request.requestMethod(), request.pathInfo());
+                    return;
+                }
+
             } catch (SQLDataException e) {
                 System.out.println("Invalid session");
                 Spark.halt();
             }
 
-        } else {
-            System.out.println("Session header does not exist");
-            Spark.halt();
         }
+        System.out.println("Session header does not exist");
+        Spark.halt();
 
 
     }

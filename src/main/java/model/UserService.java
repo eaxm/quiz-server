@@ -121,6 +121,28 @@ public class UserService {
         conn.close();
     }
 
+
+    /**
+     * Checks if session exists in user_session relation and if ip address matches stored ip address
+     *
+     * @param sessionText session
+     * @param ipAddr ip address
+     * @return true if valid
+     * @throws SQLException
+     */
+    public boolean isUserSessionValid(String sessionText, String ipAddr) throws SQLException {
+        DBConnection dbc = DBConnection.getInstance();
+        Connection conn = DriverManager.getConnection(dbc.getURL(), dbc.getProperties());
+
+        PreparedStatement ps = conn.prepareStatement("SELECT * FROM user_session WHERE session_text = ? AND ip_address = ?");
+        ps.setString(1, sessionText);
+        ps.setString(2, ipAddr);
+        ResultSet rs = ps.executeQuery();
+        conn.close();
+
+        return rs.next();
+    }
+
     public long getUserIdBySession(String sessionText) throws SQLException {
         DBConnection dbc = DBConnection.getInstance();
         Connection conn = DriverManager.getConnection(dbc.getURL(), dbc.getProperties());
@@ -129,7 +151,7 @@ public class UserService {
         ps.setString(1, sessionText);
         ResultSet rs = ps.executeQuery();
         conn.close();
-        if(rs.next()){
+        if (rs.next()) {
             return rs.getLong("user_id");
         }
 
@@ -144,7 +166,7 @@ public class UserService {
         ps.setLong(1, userId);
         ResultSet rs = ps.executeQuery();
         conn.close();
-        if(rs.next()){
+        if (rs.next()) {
             return rs.getString("username");
         }
 
@@ -159,7 +181,7 @@ public class UserService {
         ps.setLong(1, userId);
         ResultSet rs = ps.executeQuery();
         conn.close();
-        if(rs.next()){
+        if (rs.next()) {
             return rs.getTimestamp("register_date");
         }
         throw new SQLDataException("Invalid user id");
