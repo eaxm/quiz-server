@@ -21,7 +21,7 @@ public class QuizService {
     public List<Quiz> getQuizList() throws SQLException {
         DBConnection dbc = DBConnection.getInstance();
         Connection conn = DriverManager.getConnection(dbc.getURL(), dbc.getProperties());
-        String query = "SELECT quiz_name FROM quiz;";
+        String query = "SELECT quiz_name FROM quiz";
 
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(query);

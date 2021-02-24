@@ -30,7 +30,7 @@ public class UserService {
         DBConnection dbc = DBConnection.getInstance();
         Connection conn = DriverManager.getConnection(dbc.getURL(), dbc.getProperties());
 
-        String query = "SELECT * FROM account WHERE username = ?;";
+        String query = "SELECT * FROM account WHERE username = ?";
 
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1, username);
@@ -56,7 +56,7 @@ public class UserService {
     public Session auth(AuthInfo authInfo, String ipAddr) throws SQLException, AuthenticationException, InvalidKeySpecException, NoSuchAlgorithmException {
         DBConnection dbc = DBConnection.getInstance();
         Connection conn = DriverManager.getConnection(dbc.getURL(), dbc.getProperties());
-        String authQuery = "SELECT * FROM account WHERE username = ?;";
+        String authQuery = "SELECT * FROM account WHERE username = ?";
 
         PreparedStatement ps = conn.prepareStatement(authQuery);
         ps.setString(1, authInfo.getUsername());
