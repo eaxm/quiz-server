@@ -122,25 +122,33 @@ public class UserService {
     }
 
 
+    // TODO: Check for expiration
+
     /**
      * Checks if session exists in user_session relation and if ip address matches stored ip address
      *
      * @param sessionText session
-     * @param ipAddr ip address
+     * @param ipAddr      ip address
      * @return true if valid
      * @throws SQLException
      */
-    public boolean isUserSessionValid(String sessionText, String ipAddr) throws SQLException {
+    public boolean isUserSessionValid(String sessionText, String ipAddr) {
         DBConnection dbc = DBConnection.getInstance();
-        Connection conn = DriverManager.getConnection(dbc.getURL(), dbc.getProperties());
+        boolean valid;
+        try {
+            Connection conn = DriverManager.getConnection(dbc.getURL(), dbc.getProperties());
 
-        PreparedStatement ps = conn.prepareStatement("SELECT * FROM user_session WHERE session_text = ? AND ip_address = ?");
-        ps.setString(1, sessionText);
-        ps.setString(2, ipAddr);
-        ResultSet rs = ps.executeQuery();
-        conn.close();
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM user_session WHERE session_text = ? AND ip_address = ?");
+            ps.setString(1, sessionText);
+            ps.setString(2, ipAddr);
+            ResultSet rs = ps.executeQuery();
+            conn.close();
+            valid = rs.next();
+        } catch (SQLException e) {
+            valid = false;
+        }
 
-        return rs.next();
+        return valid;
     }
 
     public long getUserIdBySession(String sessionText) throws SQLException {
