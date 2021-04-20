@@ -1,6 +1,7 @@
 import filter.SessionFilter;
 import route.*;
 import spark.Spark;
+import util.SessionExpirationManager;
 
 /**
  * Main class
@@ -27,6 +28,8 @@ public class Main {
             Spark.get("/list", new QuizListRoute());
             Spark.get("/info", new AccountInfoRoute());
         });
+
+        SessionExpirationManager sem = new SessionExpirationManager(1000*60);
 
         System.out.printf("Quiz server version %s listening on port %d%n", VERSION, PORT);
 
